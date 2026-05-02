@@ -29,22 +29,29 @@
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: #3730a3; border-radius: 10px; }
 
-        .qr-wrapper { background: white; padding: 8px; border-radius: 12px; display: inline-block; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+        .qr-wrapper { background: white; padding: 8px; border-radius: 12px; display: inline-block; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); transition: transform 0.3s; }
+        .qr-wrapper:hover { transform: scale(1.05); }
         .qr-wrapper img { margin: 0 auto; border-radius: 8px; }
 
+        /* Animations */
         #startup-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #050505; z-index: 50;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: opacity 0.8s ease-out, visibility 0.8s;
         }
-        .loader-ring { width: 80px; height: 80px; border-radius: 50%; border: 3px solid transparent; border-top-color: #6366f1; border-right-color: #22d3ee; animation: spin 1s linear infinite; }
+        .loader-ring { 
+            width: 80px; height: 80px; border-radius: 50%; 
+            border: 3px solid transparent; border-top-color: #6366f1; border-right-color: #22d3ee; 
+            animation: spin 1s linear infinite; 
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .fade-in-up { opacity: 0; transform: translateY(20px); animation: fadeInUp 0.6s ease-out forwards; }
-        .delay-100 { animation-delay: 0.1s; }
-        .delay-200 { animation-delay: 0.2s; }
+        .fade-in-up { opacity: 0; transform: translateY(30px); animation: fadeInUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .delay-100 { animation-delay: 0.15s; }
+        .delay-200 { animation-delay: 0.3s; }
         @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        
         .progress-bar { transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
@@ -58,14 +65,12 @@
 
     <div class="w-full max-w-4xl flex flex-col space-y-6 opacity-0 transition-opacity duration-1000" id="main-wrapper">
 
-        <!-- ================= ERROR SECTION (If Link is wrong) ================= -->
         <div id="error-section" class="hidden glass-panel p-10 rounded-[2rem] text-center transform transition-all duration-500 max-w-xl mx-auto w-full border border-red-500/30">
-            <i class="fa-solid fa-triangle-exclamation text-5xl text-red-500 mb-4 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]"></i>
-            <h2 class="text-2xl font-bold text-white mb-2">Invalid Access Link</h2>
-            <p class="text-gray-400 text-sm">Please make sure you are using the exact link provided by the Admin.</p>
+            <i class="fa-solid fa-triangle-exclamation text-5xl text-red-500 mb-4 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)] animate-bounce"></i>
+            <h2 class="text-2xl font-bold text-white mb-2">User Not Found</h2>
+            <p class="text-gray-400 text-sm">Cannot load data. Please contact Admin.</p>
         </div>
 
-        <!-- ================= DASHBOARD SECTION (READ ONLY) ================= -->
         <div id="dashboard-section" class="hidden space-y-6">
             
             <div class="glass-panel p-6 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-4 relative overflow-hidden fade-in-up">
@@ -92,7 +97,6 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
-                <!-- Outline Card -->
                 <div class="glass-panel p-6 rounded-3xl data-card relative overflow-hidden group fade-in-up delay-100 flex flex-col">
                     <div class="absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
                     <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
@@ -107,7 +111,7 @@
                     </div>
                     
                     <div class="flex-1 space-y-4 relative z-10 flex flex-col justify-between">
-                        <div class="bg-black/40 p-4 rounded-2xl border border-white/5 relative overflow-hidden">
+                        <div class="bg-black/40 p-4 rounded-2xl border border-white/5 relative overflow-hidden transition-colors hover:bg-black/50">
                             <p class="text-xs text-gray-400 mb-1 uppercase tracking-widest flex justify-between">
                                 <span>Data Usage</span>
                                 <span id="out-percent-text" class="text-indigo-400 font-bold">0%</span>
@@ -116,22 +120,21 @@
                                 <p class="text-3xl font-extrabold text-white" style="text-shadow: 0 0 20px rgba(99,102,241,0.6);" id="out-used-show">0</p>
                                 <p class="text-sm text-gray-500 font-medium mb-1">/ <span id="out-total-show">0</span> GB</p>
                             </div>
-                            <div class="w-full bg-gray-800 rounded-full h-1.5 border border-gray-700/50">
+                            <div class="w-full bg-gray-800 rounded-full h-1.5 border border-gray-700/50 overflow-hidden">
                                 <div id="out-progress" class="bg-gradient-to-r from-indigo-600 to-cyan-400 h-1.5 rounded-full progress-bar shadow-[0_0_10px_rgba(99,102,241,0.8)]" style="width: 0%"></div>
                             </div>
                         </div>
 
-                        <div class="bg-black/40 p-4 rounded-2xl border border-white/5 flex justify-between items-center">
+                        <div class="bg-black/40 p-4 rounded-2xl border border-white/5 flex justify-between items-center transition-colors hover:bg-black/50">
                             <div><p class="text-xs text-gray-400 mb-1 uppercase tracking-widest">Expire Date</p><p class="text-lg font-bold text-gray-200" id="out-expire-show">N/A</p></div>
-                            <i class="fa-regular fa-calendar text-indigo-500/50 text-2xl"></i>
+                            <i class="fa-regular fa-calendar text-indigo-500/50 text-2xl group-hover:scale-110 transition-transform"></i>
                         </div>
 
-                        <!-- Copy & QR Section -->
                         <div class="bg-indigo-900/20 p-4 rounded-2xl border border-indigo-500/30 flex items-center justify-between mt-auto">
                             <div class="flex-1 mr-4">
                                 <p class="text-xs text-indigo-300 mb-2 font-bold uppercase tracking-widest">Access Key</p>
-                                <input type="text" id="out-key-hidden" class="w-full bg-black/50 border border-indigo-500/50 rounded-lg px-3 py-2 text-xs text-indigo-100 mb-3" readonly value="Loading...">
-                                <button onclick="copyKey('out-key-hidden')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_5px_15px_-5px_rgba(99,102,241,0.6)] flex items-center justify-center gap-2">
+                                <input type="text" id="out-key-hidden" class="w-full bg-black/50 border border-indigo-500/50 rounded-lg px-3 py-2 text-xs text-indigo-100 mb-3 focus:outline-none focus:border-indigo-400 transition-colors" readonly value="Loading...">
+                                <button onclick="copyKey('out-key-hidden')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_5px_15px_-5px_rgba(99,102,241,0.6)] flex items-center justify-center gap-2 hover:scale-[1.02]">
                                     <i class="fa-solid fa-copy"></i> COPY KEY
                                 </button>
                             </div>
@@ -140,7 +143,6 @@
                     </div>
                 </div>
 
-                <!-- VLESS Card -->
                 <div class="glass-panel p-6 rounded-3xl data-card relative overflow-hidden group fade-in-up delay-200 flex flex-col">
                     <div class="absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
                     <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl"></div>
@@ -155,7 +157,7 @@
                     </div>
                     
                     <div class="flex-1 space-y-4 relative z-10 flex flex-col justify-between">
-                        <div class="bg-black/40 p-4 rounded-2xl border border-white/5 relative overflow-hidden">
+                        <div class="bg-black/40 p-4 rounded-2xl border border-white/5 relative overflow-hidden transition-colors hover:bg-black/50">
                             <p class="text-xs text-gray-400 mb-1 uppercase tracking-widest flex justify-between">
                                 <span>Data Usage</span>
                                 <span id="vless-percent-text" class="text-cyan-400 font-bold">0%</span>
@@ -164,22 +166,21 @@
                                 <p class="text-3xl font-extrabold text-white" style="text-shadow: 0 0 20px rgba(34,211,238,0.6);" id="vless-used-show">0</p>
                                 <p class="text-sm text-gray-500 font-medium mb-1">/ <span id="vless-total-show">0</span> GB</p>
                             </div>
-                            <div class="w-full bg-gray-800 rounded-full h-1.5 border border-gray-700/50">
+                            <div class="w-full bg-gray-800 rounded-full h-1.5 border border-gray-700/50 overflow-hidden">
                                 <div id="vless-progress" class="bg-gradient-to-r from-cyan-500 to-teal-400 h-1.5 rounded-full progress-bar shadow-[0_0_10px_rgba(34,211,238,0.8)]" style="width: 0%"></div>
                             </div>
                         </div>
 
-                        <div class="bg-black/40 p-4 rounded-2xl border border-white/5 flex justify-between items-center">
+                        <div class="bg-black/40 p-4 rounded-2xl border border-white/5 flex justify-between items-center transition-colors hover:bg-black/50">
                             <div><p class="text-xs text-gray-400 mb-1 uppercase tracking-widest">Expire Date</p><p class="text-lg font-bold text-gray-200" id="vless-expire-show">N/A</p></div>
-                            <i class="fa-regular fa-clock text-cyan-500/50 text-2xl"></i>
+                            <i class="fa-regular fa-clock text-cyan-500/50 text-2xl group-hover:scale-110 transition-transform"></i>
                         </div>
 
-                        <!-- Copy & QR Section -->
                         <div class="bg-cyan-900/20 p-4 rounded-2xl border border-cyan-500/30 flex items-center justify-between mt-auto">
                             <div class="flex-1 mr-4">
                                 <p class="text-xs text-cyan-300 mb-2 font-bold uppercase tracking-widest">Server Link</p>
-                                <input type="text" id="vless-key-hidden" class="w-full bg-black/50 border border-cyan-500/50 rounded-lg px-3 py-2 text-xs text-cyan-100 mb-3" readonly value="Loading...">
-                                <button onclick="copyKey('vless-key-hidden')" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_5px_15px_-5px_rgba(34,211,238,0.6)] flex items-center justify-center gap-2">
+                                <input type="text" id="vless-key-hidden" class="w-full bg-black/50 border border-cyan-500/50 rounded-lg px-3 py-2 text-xs text-cyan-100 mb-3 focus:outline-none focus:border-cyan-400 transition-colors" readonly value="Loading...">
+                                <button onclick="copyKey('vless-key-hidden')" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_5px_15px_-5px_rgba(34,211,238,0.6)] flex items-center justify-center gap-2 hover:scale-[1.02]">
                                     <i class="fa-solid fa-copy"></i> COPY LINK
                                 </button>
                             </div>
@@ -208,7 +209,6 @@
         };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        let liveListener = null;
 
         // ================= QR CODES INIT =================
         let outQR = new QRCode(document.getElementById("out-qr"), { width: 100, height: 100, colorDark : "#000000", colorLight : "#ffffff" });
@@ -219,6 +219,7 @@
             document.getElementById(usedId).innerText = used;
             document.getElementById(totalId).innerText = total;
             let percent = total > 0 ? Math.min((used / total) * 100, 100) : 0;
+            
             setTimeout(() => {
                 document.getElementById(progressId).style.width = `${percent}%`;
                 document.getElementById(percentTextId).innerText = `${Math.round(percent)}%`;
@@ -229,7 +230,7 @@
                     document.getElementById(progressId).classList.replace('to-teal-400', 'to-orange-500');
                     document.getElementById(percentTextId).classList.add('text-red-400');
                 }
-            }, 300); 
+            }, 500); 
         }
 
         // ================= COPY FUNCTION =================
@@ -249,20 +250,19 @@
                 const originalClass = btn.className;
 
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> COPIED!';
-                btn.className = "w-full bg-emerald-600 text-white py-2.5 rounded-xl text-sm font-bold transition-all shadow-md flex items-center justify-center gap-2";
+                btn.className = "w-full bg-emerald-600 text-white py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_5px_15px_-5px_rgba(16,185,129,0.6)] flex items-center justify-center gap-2";
                 
                 setTimeout(() => {
                     btn.innerHTML = originalHtml;
                     btn.className = originalClass;
                 }, 2000);
-                
             }).catch(err => {
                 console.error('Failed to copy: ', err);
                 alert("Failed to copy automatically.");
             });
         };
 
-        // ================= AUTO LOGIN VIA URL PARAMETER =================
+        // ================= AUTO LOGIN (HARDCODED USER) =================
         window.addEventListener('load', () => {
             const overlay = document.getElementById('startup-overlay');
             const mainWrapper = document.getElementById('main-wrapper');
@@ -270,36 +270,19 @@
             const errorSection = document.getElementById('error-section');
             const dashboardSection = document.getElementById('dashboard-section');
 
-            // 1. URL မှ ID ကို ရယူပြီး ရှင်းလင်းခြင်း (Clean up)
-            const urlParams = new URLSearchParams(window.location.search);
-            let rawId = urlParams.get('id');
+            // ⚠️ ဤနေရာတွင် သင့် User ၏ ID ကို အသေ သတ်မှတ်ပေးထားပါသည်။
+            const TARGET_USER_ID = "FREE5";
 
-            if(!rawId) {
-                // No ID found -> Show Error
-                setTimeout(() => {
-                    overlay.style.opacity = '0';
-                    setTimeout(() => { 
-                        overlay.style.visibility = 'hidden'; 
-                        errorSection.classList.remove('hidden');
-                        mainWrapper.classList.remove('opacity-0'); 
-                    }, 800);
-                }, 1000);
-                return;
-            }
+            loadingMsg.innerText = "Authenticating " + TARGET_USER_ID + "...";
 
-            // 💡 URL အနောက်မှာ ကပ်ပါလာတတ်တဲ့ ] ဒါမှမဟုတ် ) တွေကို ဖြတ်ထုတ်ခြင်း
-            let cleanUsername = rawId.split(']')[0].split(')')[0].trim();
-
-            loadingMsg.innerText = "Authenticating " + cleanUsername + "...";
-
-            const userRef = doc(db, "users", cleanUsername);
+            const userRef = doc(db, "users", TARGET_USER_ID);
             
-            liveListener = onSnapshot(userRef, (docSnap) => {
+            onSnapshot(userRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     
                     // Profile Name
-                    const showName = data.displayName || cleanUsername;
+                    const showName = data.displayName || TARGET_USER_ID;
                     document.getElementById('display-name').innerText = showName;
                     
                     // Update Outline Data & QR
@@ -316,7 +299,7 @@
                     document.getElementById('vless-key-hidden').value = vKey ? vKey : "No Link Assigned";
                     if(data.vlessKey) { vlessQR.makeCode(data.vlessKey); } else { vlessQR.clear(); }
 
-                    // Hide Loader, Show Dashboard
+                    // Hide Loader, Show Dashboard Animation
                     setTimeout(() => {
                         overlay.style.opacity = '0';
                         setTimeout(() => { 
@@ -325,23 +308,22 @@
                             dashboardSection.classList.remove('hidden');
                             mainWrapper.classList.remove('opacity-0'); 
                         }, 800);
-                    }, 1000);
+                    }, 800);
 
                 } else {
-                    // Wrong Username in URL
+                    // Wrong Username -> Show Error
                     setTimeout(() => {
                         overlay.style.opacity = '0';
                         setTimeout(() => { 
                             overlay.style.visibility = 'hidden'; 
                             errorSection.classList.remove('hidden');
                             errorSection.innerHTML = `
-                                <i class="fa-solid fa-circle-xmark text-5xl text-red-500 mb-4 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]"></i>
-                                <h2 class="text-2xl font-bold text-white mb-2">User Not Found</h2>
-                                <p class="text-gray-400 text-sm">The ID <b class="text-red-400">${cleanUsername}</b> does not exist in our database.</p>`;
+                                <i class="fa-solid fa-circle-xmark text-5xl text-red-500 mb-4 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)] animate-bounce"></i>
+                                <h2 class="text-2xl font-bold text-white mb-2">Data Not Found</h2>
+                                <p class="text-gray-400 text-sm">No data available for <b class="text-red-400">${TARGET_USER_ID}</b>. Please contact Admin.</p>`;
                             mainWrapper.classList.remove('opacity-0'); 
                         }, 800);
-                    }, 1000);
-                    if(liveListener) liveListener(); 
+                    }, 800);
                 }
             }, (error) => {
                 loadingMsg.innerText = "Connection error. Please refresh.";
